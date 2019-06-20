@@ -15,17 +15,23 @@ const router = express.Router();
     mongoose.Promise = global.Promise;
 
     //Conectando na Azure - Using the Node.js 3.0 driver
-    mongoClient.connect("mongodb://mongo-api-rest:bvSHnQIZ4jWHVvYbMrIfS2RiThdh8eNolEfCYpBVCfMsv8D5fXmQq3VRoPbDPFmtfvvjvL25mOJIm9egmNJaTQ%3D%3D@mongo-api-rest.documents.azure.com:10255/?ssl=true", function (err, client) {
-        client.close();
-    });
+    mongoClient
+        .connect("mongodb://mongo-api-rest:bvSHnQIZ4jWHVvYbMrIfS2RiThdh8eNolEfCYpBVCfMsv8D5fXmQq3VRoPbDPFmtfvvjvL25mOJIm9egmNJaTQ%3D%3D@mongo-api-rest.documents.azure.com:10255/?ssl=true")
+        .then(() => {
+            console.log("Conectado ao mongo!")
+        }).catch((e) => {
+            client.close();
+            console.log("Erro ao conectar ao mongo: " + e)
+        } )  
+            
 
-    mongoose.connect('mongodb://localhost/blogapp', { useNewUrlParser: true }).then(() => {
-        //mongoose.connect('mongodb://localhost/blogapp', { useNewUrlParser: true }).then(() => {
-       // config.connectionString, { useNewUrlParser: true }).then(() => {
-        console.log("Conectado ao mongo!")
-    }).catch((e) => {
-        console.log("Erro ao conectar ao mongo: " + e)
-    } )
+    // mongoose.connect('mongodb://localhost/blogapp', { useNewUrlParser: true }).then(() => {
+    //     //mongoose.connect('mongodb://localhost/blogapp', { useNewUrlParser: true }).then(() => {
+    //    // config.connectionString, { useNewUrlParser: true }).then(() => {
+    //     console.log("Conectado ao mongo!")
+    // }).catch((e) => {
+    //     console.log("Erro ao conectar ao mongo: " + e)
+    // } )
 
 //Carrega os models
     const Product   = require('./models/product');
