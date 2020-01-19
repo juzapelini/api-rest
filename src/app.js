@@ -2,8 +2,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose'); //Era o que eu usava local
-//const mongoClient = require("mongodb").MongoClient; //By Azure
+//const mongoose = require('mongoose'); //Era o que eu usava local
 
 //const db = require("../bin/db")
 const config = require("./config")
@@ -12,18 +11,30 @@ const app = express();
 const router = express.Router();
 
 //conecta ao mongo
-    mongoose.Promise = global.Promise;
 
-    //Conectando na Azure - Using the Node.js 3.0 driver
-//    mongoClient
-    mongoose
-        .connect("mongodb://mongo-api-rest:bvSHnQIZ4jWHVvYbMrIfS2RiThdh8eNolEfCYpBVCfMsv8D5fXmQq3VRoPbDPFmtfvvjvL25mOJIm9egmNJaTQ%3D%3D@mongo-api-rest.documents.azure.com:10255/?ssl=true")
-        .then(() => {
-            console.log("Conectado ao mongo!")
-        }).catch((e) => {
-            client.close();
-            console.log("Erro ao conectar ao mongo: " + e)
-        } )  
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://zapelini:zap01ok@cluster0-m5sjd.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true });
+client.connect(err => {
+  console.log("Erro ao conectar ao mongo: " + err)
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});
+    // mongoose.Promise = global.Promise;
+
+    // mongoose
+    //     .connect("mongodb+srv://zapelini:zap01ok@cluster0-m5sjd.gcp.mongodb.net/test?retryWrites=true&w=majority")
+    //     .then(() => {
+    //         console.log("Conectado ao mongo!")
+    //         console.log("Conectado ao mongo!")
+    //         console.log("Conectado ao mongo!")
+    //     }).catch((e) => {
+    //         client.close();
+    //         console.log("Erro ao conectar ao mongo: " + e)
+    //         console.log("Erro ao conectar ao mongo: " + e)
+    //         console.log("Erro ao conectar ao mongo: " + e)
+    //     } )  
             
 
     // mongoose.connect('mongodb://localhost/blogapp', { useNewUrlParser: true }).then(() => {
@@ -35,15 +46,11 @@ const router = express.Router();
     // } )
 
 //Carrega os models
-    const Product   = require('./models/product');
     const Customer  = require('./models/customer');
-    const Order     = require('./models/order');
 
 //carrega as rotas
     const indexRoute = require("./routes/index-route");
-    const productRoute = require("./routes/products-route");
     const customerRoute = require("./routes/customer-route");
-    const orderRoute = require("./routes/order-route");
     const callApi = require("./routes/callApi-route");
 
 app.use(bodyParser.json({
@@ -61,9 +68,7 @@ app.use(function(req, res, next){
 
 
 app.use('/', indexRoute)
-app.use('/products', productRoute);
 app.use('/customer', customerRoute);
-app.use('/order', orderRoute);
 app.use('/api', callApi);
 
 
